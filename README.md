@@ -24,166 +24,388 @@ Minha solução automatiza essa análise usando IA local, garantindo privacidade
 
 Decidi usar **3 containers no Proxmox** para isolar cada função do sistema:
 
-### **Diagrama 1: Arquitetura do Sistema**
+### **📊 DIAGRAMA 1: Visão Geral do Ecossistema**
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  PVE1 - Proxmox Virtual Environment                        │
-│  IP: 192.168.0.192                                         │
-│  Hardware: Ryzen 5 5600X, 30GB RAM, SSD 223GB             │
-│                                                             │
-│  ┌───────────────────────────────────────────────────┐    │
-│  │  REDE INTERNA: 192.168.0.0/24 (Bridge vmbr0)     │    │
-│  │                                                    │    │
-│  │   ┌──────────┐      ┌──────────┐      ┌────────┐ │    │
-│  │   │ CT 101   │─────▶│ CT 106   │─────▶│ CT 102 │ │    │
-│  │   │ Mails    │      │ Dr_      │      │DATASVR │ │    │
-│  │   │ .240     │      │ Finance  │      │ .72    │ │    │
-│  │   │ (Emails) │      │ (.231)   │      │(Backup)│ │    │
-│  │   └──────────┘      └──────────┘      └────────┘ │    │
-│  │                                                    │    │
-│  └───────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### **Diagrama 2: Fluxo de Dados**
-
-```
-┌─────────────┐
-│  Gmail      │  1. Email do Nubank chega
-│  (Internet) │
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  CT 101     │  2. Capturo e valido email
-│  Mails      │  3. Filtra @nubank.com.br
-│  .240       │  4. Extraio dados (HTML/PDF)
-└──────┬──────┘
-       │ (envia dados)
-       ▼
-┌─────────────┐
-│  CT 106     │  5. Ollama analisa transações
-│  Dr_Finance │  6. Identifico padrões
-│  .231       │  7. Gero relatório + sugestões
-└──────┬──────┘
-       │ (envia relatório)
-       ▼
-┌─────────────┐
-│  CT 102     │  8. Backup automático
-│  DATASVR    │  9. Armazeno histórico
-│  .72        │ 10. Disponível para consulta
-└──────┬──────┘
-       │
-       ▼
-┌─────────────┐
-│  Você       │  Relatório no Telegram/Email
-│  (Telegram) │
-└─────────────┘
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    PVE1 - PROXMOX VIRTUAL ENVIRONMENT                        ║
+║                    Host: 192.168.0.192 | Ryzen 5 5600X | 30GB RAM           ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║                                                                              ║
+║  ═══════════════════════════════════════════════════════════════════════     ║
+║                    REDE INTERNA: 192.168.0.0/24 (vmbr0)                      ║
+║  ═══════════════════════════════════════════════════════════════════════     ║
+║                                                                              ║
+║    ┌──────────────────┐         ┌──────────────────┐         ┌────────────┐ ║
+║    │   CT 101         │         │   CT 106         │         │   CT 102   │ ║
+║    │   ══════         │         │   ══════         │         │   ══════   │ ║
+║    │   Mails          │         │   Dr_Finance     │         │   DATASVR  │ ║
+║    │                  │         │                  │         │            │ ║
+║    │   📧 Coleta      │────┬───▶│   🤖 Analisa     │────┬───▶│   💾 Backup│ ║
+║    │   📩 Valida      │    │    │   📊 Relatórios  │    │    │   📁 Histórico║
+║    │   🔍 Extrai      │    │    │   💡 Sugere      │    │    │            │ ║
+║    │                  │    │    │                  │    │    │            │ ║
+║    │   IP: .240       │    │    │   IP: .231       │    │    │   IP: .72  │ ║
+║    │   RAM: 2GB       │    │    │   RAM: 2GB       │    │    │   RAM: 2GB │ ║
+║    │   Disk: 8GB      │    │    │   Disk: 20GB     │    │    │   Disk: 50GB║
+║    └──────────────────┘    │    └──────────────────┘    │    └────────────┘ ║
+║                            │                            │                    ║
+║                            │                            │                    ║
+║    ┌──────────────────┐    │    ┌──────────────────┐    │    ┌────────────┐ ║
+║    │   SOFTWARE       │    │    │   SOFTWARE       │    │    │   SOFTWARE │ ║
+║    │   • Gmail API    │    │    │   • OpenClaw     │    │    │   • Samba  │ ║
+║    │   • HTML Parser  │    │    │   • Ollama 0.21  │    │    │   • NFS    │ ║
+║    │   • PDF Extractor│    │    │   • Node.js 20   │    │    │   • Rsync  │ ║
+║    │   • Anti-Phishing│    │    │   • Skills Python│    │    │   • ZFS    │ ║
+║    └──────────────────┘    │    └──────────────────┘    │    └────────────┘ ║
+║                            │                            │                    ║
+║  ══════════════════════════╧════════════════════════════╧════════════════    ║
+║                              🌐 BRIDGE VMbr0                                 ║
+║  ═══════════════════════════════════════════════════════════════════════     ║
+║                                                                              ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+                                    │
+                                    ▼
+                          ┌─────────────────┐
+                          │   📱 Você       │
+                          │   Telegram/Email│
+                          └─────────────────┘
 ```
 
 ---
 
-## 📋 Os 3 Containers que Criei
-
-### **Diagrama 3: Detalhe de Cada Container**
+### **🔄 DIAGRAMA 2: Fluxo de Dados Completo (10 Passos)**
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│  CT 101 - MAILS (192.168.0.240)                             │
-│  Função: Coletor de Emails                                  │
-│  Recursos: 2GB RAM, 2 cores, 8GB disco                      │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │  • Lê Gmail automaticamente                          │  │\n│  │  • Filtra @nubank.com.br                             │  │\n│  │  • Valida anti-phishing                              │  │\n│  │  • Extrai HTML/PDF                                   │  │\n│  │  • Envia para CT 106                                 │  │
-│  └──────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────┘
-                          │
-                          ▼
-┌──────────────────────────────────────────────────────────────┐
-│  CT 106 - Dr_Finance (192.168.0.231)                        │
-│  Função: Análise Financeira com IA                          │
-│  Recursos: 2GB RAM, 2 cores, 20GB disco                     │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │  • OpenClaw (orquestrador)                           │  │\n│  │  • Ollama 0.21.0 (IA local)                          │  │\n│  │  • Node.js 20.x                                      │  │\n│  │  • Analisa transações                                │  │\n│  │  • Identifica padrões                                │  │\n│  │  • Gera relatórios (19:00 automático)                │  │\n│  │  • Sugere economia                                   │  │
-│  └──────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────┘
-                          │
-                          ▼
-┌──────────────────────────────────────────────────────────────┐
-│  CT 102 - DATASVR (192.168.0.72)                            │
-│  Função: Armazenamento e Backup                             │
-│  Recursos: 2GB RAM, 2 cores, 50GB disco                     │
-│  ┌──────────────────────────────────────────────────────┐  │
-│  │  • Samba (\\192.168.0.72\LAN\)                       │  │\n│  │  • Backup automático dos CTs 101 e 106               │  │\n│  │  • Histórico financeiro (anos)                       │  │\n│  │  • /home/master/LAN/MEMORIES/STARK/05-FINANCAS/      │  │\n│  │  • Logs de auditoria                                 │  │
-│  └──────────────────────────────────────────────────────┘  │
-└──────────────────────────────────────────────────────────────┘
+                                    FLUXO DE DADOS
+    ═══════════════════════════════════════════════════════════════════
+
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  ETAPA 1: COLETA                                                    │
+    │                                                                     │
+    │     ┌──────────────┐                                               │
+    │     │   📧 Gmail   │                                               │
+    │     │   (Internet) │                                               │
+    │     └──────┬───────┘                                               │
+    │            │                                                        │
+    │            │ 1. Email do Nubank chega                               │
+    │            │    Assunto: "Extrato da fatura"                       │
+    │            ▼                                                        │
+    └─────────────────────────────────────────────────────────────────────┘
+                         │
+                         │ 2. IMAP/POP3 fetch
+                         ▼
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  ETAPA 2: PROCESSAMENTO (CT 101 - Mails)                            │
+    │                                                                     │
+    │     ┌──────────────────────────────────────────────────────────┐   │
+    │     │  ✅ Validação de Domínio (@nubank.com.br)                │   │
+    │     │  🔍 Anti-Phishing (3 camadas)                            │   │
+    │     │  📄 Extração HTML/PDF                                    │   │
+    │     │  📊 Estruturação JSON                                    │   │
+    │     └──────────────────────────────────────────────────────────┘   │
+    │                                                                     │
+    │     Dados extraídos:                                               │
+    │     • Transações: 19 itens                                         │
+    │     • Valores: R$ 320,00                                           │
+    │     • Categorias: 5 tipos                                          │
+    └─────────────────────────────────────────────────────────────────────┘
+                         │
+                         │ 3. POST /api/analyze
+                         │    Content-Type: application/json
+                         ▼
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  ETAPA 3: ANÁLISE COM IA (CT 106 - Dr_Finance)                      │
+    │                                                                     │
+    │     ┌──────────────────────────────────────────────────────────┐   │
+    │     │  🧠 Ollama 0.21.0 (phi3:mini)                            │   │
+    │     │     • Modelo local (privacidade total)                   │   │
+    │     │     • Dados não saem do servidor                         │   │
+    │     │     • Contexto: 4096 tokens                              │   │
+    │     └──────────────────────────────────────────────────────────┘   │
+    │                                                                     │
+    │     Processamento:                                                  │
+    │     1. Recebe transações JSON                                       │
+    │     2. Compara com histórico (CT 102)                               │
+    │     3. Identifica padrões                                           │
+    │     4. Detecta anomalias                                            │
+    │     5. Gera sugestões de economia                                   │
+    │                                                                     │
+    │     Exemplo de análise:                                             │
+    │     "Combustível: 47% dos gastos (R$ 150,00)                       │
+    │      Acima da média mensal em 23%                                  │
+    │      Sugestão: Reduzir de 5 para 3 jantares/semana                 │
+    │      Economia: R$ 560/mês = R$ 6.720/ano"                          │
+    └─────────────────────────────────────────────────────────────────────┘
+                         │
+                         │ 4. Relatório formatado
+                         │    (Telegram/Email)
+                         ▼
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  ETAPA 4: ENTREGA AO USUÁRIO                                        │
+    │                                                                     │
+    │     ┌──────────────────────────────────────────────────────────┐   │
+    │     │  📱 Telegram: @Acib_Abbade                               │   │
+    │     │  📧 Email: abbade@outlook.com                            │   │
+    │     └──────────────────────────────────────────────────────────┘   │
+    │                                                                     │
+    │     Horário: 19:00 (automático via cron)                           │
+    │     Formato: Texto + Emoji + Tabela                                │
+    └─────────────────────────────────────────────────────────────────────┘
+                         │
+                         │ 5. Backup automático
+                         │    (rsync + compressão)
+                         ▼
+    ┌─────────────────────────────────────────────────────────────────────┐
+    │  ETAPA 5: ARMAZENAMENTO (CT 102 - DATASVR)                          │
+    │                                                                     │
+    │     ┌──────────────────────────────────────────────────────────┐   │
+    │     │  💾 Samba: \\192.168.0.72\LAN\                           │   │
+    │     │  📁 /home/master/LAN/MEMORIES/STARK/05-FINANCAS/         │   │
+    │     │  📊 Histórico completo (anos)                            │   │
+    │     │  🔒 Logs de auditoria                                    │   │
+    │     └──────────────────────────────────────────────────────────┘   │
+    │                                                                     │
+    │     Estrutura de backup:                                            │
+    │     • /transacoes/YYYY-MM-DD.csv                                   │
+    │     • /relatorios/YYYY-MM-DD.md                                    │
+    │     • /logs/audit.log                                              │
+    └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### Resumo dos 3 CTs:
+---
 
-| CT | Nome | IP | Função | Recursos |
-|----|------|-----|--------|----------|
-| **101** | Mails | 192.168.0.240 | Coleta emails do Nubank | 2GB RAM, 2 cores, 8GB |
-| **102** | DATASVR | 192.168.0.72 | Backup e histórico | 2GB RAM, 2 cores, 50GB |
-| **106** | Dr_Finance | 192.168.0.231 | Análise com IA | 2GB RAM, 2 cores, 20GB |
+### **🔧 DIAGRAMA 3: Arquitetura Técnica Detalhada**
+
+```
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                        ARQUITETURA TÉCNICA DO SISTEMA                        ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+┌────────────────────────────────────────────────────────────────────────────────┐
+│  CT 101 - MAILS (192.168.0.240)                                               │
+│  ═══════════════════════════════════════                                        │
+│  Função: Coletor e Validador de Emails                                        │
+│  Recursos: 2GB RAM | 2 vCPU | 8GB SSD                                          │
+│                                                                                │
+│  ┌──────────────────────────────────────────────────────────────────────────┐ │
+│  │  CAMADA DE AQUISIÇÃO                                                     │ │
+│  │  ─────────────────────                                                   │ │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                   │ │
+│  │  │ Gmail IMAP   │  │ HTML Parser  │  │ PDF Extractor│                   │ │
+│  │  │ Port 993     │  │ BeautifulSoup│  │ PyPDF2       │                   │ │
+│  │  │ SSL/TLS      │  │ XPath        │  │ OCR (TBD)    │                   │ │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘                   │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+│  │                                                                            │
+│  ┌──────────────────────────────────────────────────────────────────────────┐ │
+│  │  CAMADA DE VALIDAÇÃO                                                     │ │
+│  │  ─────────────────────                                                   │ │
+│  │  ┌────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │  ✅ Verifica domínio: @nubank.com.br                               │ │ │
+│  │  │  🔍 Valida SPF/DKIM                                                │ │ │
+│  │  │  🚫 Blocklist de remetentes suspeitos                              │ │ │
+│  │  │  📝 Log de auditoria                                               │ │ │
+│  │  └────────────────────────────────────────────────────────────────────┘ │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+│  │                                                                            │
+│  ┌──────────────────────────────────────────────────────────────────────────┐ │
+│  │  CAMADA DE EXPORTAÇÃO                                                    │ │
+│  │  ─────────────────────                                                   │ │
+│  │  ┌──────────────┐  ┌──────────────┐                                     │ │
+│  │  │ JSON Schema  │──│ POST API     │                                     │ │
+│  │  │ Validation   │  │ CT 106:18789 │                                     │ │
+│  │  └──────────────┘  └──────────────┘                                     │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    │ JSON Payload
+                                    │ { transações[], metadata, timestamp }
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────────────┐
+│  CT 106 - Dr_Finance (192.168.0.231)                                          │
+│  ═══════════════════════════════════════                                        │
+│  Função: Motor de Análise com IA                                              │
+│  Recursos: 2GB RAM | 2 vCPU | 20GB SSD                                         │
+│                                                                                │
+│  ┌──────────────────────────────────────────────────────────────────────────┐ │
+│  │  ORQUESTRADOR                                                            │ │
+│  │  ───────────────                                                         │ │
+│  │  ┌────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │  OpenClaw v1.0                                                     │ │ │
+│  │  │  • Gerenciamento de sessões                                        │ │ │
+│  │  │  • Tool routing                                                    │ │ │
+│  │  │  • Memory management                                               │ │ │
+│  │  │  • Cron jobs (19:00 diário)                                        │ │ │
+│  │  └────────────────────────────────────────────────────────────────────┘ │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+│  │                                                                            │
+│  ┌──────────────────────────────────────────────────────────────────────────┐ │
+│  │  MOTOR DE IA                                                             │ │
+│  │  ─────────────                                                           │ │
+│  │  ┌────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │  Ollama 0.21.0 (CPU-only)                                          │ │ │
+│  │  │  Modelo: phi3:mini (3.8B parâmetros)                               │ │ │
+│  │  │  Contexto: 4096 tokens                                             │ │ │
+│  │  │  VRAM: N/A (CPU)                                                   │ │ │
+│  │  │  Privacidade: 100% local                                           │ │ │
+│  │  └────────────────────────────────────────────────────────────────────┘ │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+│  │                                                                            │
+│  ┌──────────────────────────────────────────────────────────────────────────┐ │
+│  │  SKILLS ESPECIALIZADAS                                                   │ │
+│  │  ─────────────────────                                                   │ │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                   │ │
+│  │  │ analyzer.py  │  │ daily-report │  │ alerts.py    │                   │ │
+│  │  │ Padrões      │  │ 19:00 auto   │  │ Alertas      │                   │ │
+│  │  │ Tendências   │  │ Resumo       │  │ Anomalias    │                   │ │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘                   │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────────────────────────────┘
+                                    │
+                                    │ Relatório + Backup Request
+                                    │ { relatorio.md, transacoes.csv }
+                                    ▼
+┌────────────────────────────────────────────────────────────────────────────────┐
+│  CT 102 - DATASVR (192.168.0.72)                                              │
+│  ═══════════════════════════════════════                                        │
+│  Função: Armazenamento e Backup                                               │
+│  Recursos: 2GB RAM | 2 vCPU | 50GB SSD                                         │
+│                                                                                │
+│  ┌──────────────────────────────────────────────────────────────────────────┐ │
+│  │  SISTEMA DE ARQUIVOS                                                     │ │
+│  │  ───────────────────                                                     │ │
+│  │  ┌────────────────────────────────────────────────────────────────────┐ │ │
+│  │  │  Samba Server (SMB/CIFS)                                           │ │ │
+│  │  │  Share: \\192.168.0.72\LAN\                                        │ │ │
+│  │  │  Path: /home/master/LAN/                                           │ │ │
+│  │  │  Auth: root / Rcmp@814k$1982                                       │ │ │
+│  │  └────────────────────────────────────────────────────────────────────┘ │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+│  │                                                                            │
+│  ┌──────────────────────────────────────────────────────────────────────────┐ │
+│  │  ESTRUTURA DE PASTAS                                                     │ │
+│  │  ─────────────────────                                                   │ │
+│  │  /LAN/                                                                   │ │
+│  │  ├── MEMORIES/                                                           │ │
+│  │  │   └── STARK/                                                          │ │
+│  │  │       └── 05-FINANCAS/                                                │ │
+│  │  │           ├── transacoes/YYYY-MM-DD.csv                              │ │
+│  │  │           ├── relatorios/YYYY-MM-DD.md                               │ │
+│  │  │           └── logs/audit.log                                         │ │
+│  │  ├── BACKUP_CRITICO/                                                     │ │
+│  │  └── Documentacao/                                                       │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+│  │                                                                            │
+│  ┌──────────────────────────────────────────────────────────────────────────┐ │
+│  │  ROTINAS DE BACKUP                                                       │ │
+│  │  ─────────────────                                                       │ │
+│  │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐                   │ │
+│  │  │ Rsync        │  │ Zstd         │  │ Snapshots    │                   │ │
+│  │  │ Incremental  │  │ Compressão   │  │ ZFS (TBD)    │                   │ │
+│  │  └──────────────┘  └──────────────┘  └──────────────┘                   │ │
+│  └──────────────────────────────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### **📊 Resumo dos 3 CTs:**
+
+| CT | Nome | IP | Função | Recursos | Software Principal |
+|----|------|-----|--------|----------|-------------------|
+| **101** | Mails | 192.168.0.240 | Coleta e valida emails | 2GB RAM, 2 cores, 8GB | Gmail API, HTML Parser, Anti-Phishing |
+| **102** | DATASVR | 192.168.0.72 | Backup e histórico | 2GB RAM, 2 cores, 50GB | Samba, Rsync, ZFS |
+| **106** | Dr_Finance | 192.168.0.231 | Análise com IA | 2GB RAM, 2 cores, 20GB | OpenClaw, Ollama, Node.js |
 
 ---
 
 ## 🛠️ Tecnologias que Usei
 
 ### **Infraestrutura:**
-- **Proxmox VE** - Hipervisor para containers
-- **LXC** - Containers Linux (mais leves que VMs)
-- **Rede 192.168.0.0/24** - Rede interna isolada
+- **Proxmox VE** - Hipervisor para containers LXC
+- **LXC** - Linux Containers (mais leves que VMs)
+- **Rede 192.168.0.0/24** - Rede interna isolada via bridge vmbr0
+- **PVE1 Host** - Ryzen 5 5600X, 30GB RAM, SSD 223GB
 
-### **Software:**
-- **Ubuntu 25.04** - Sistema operacional dos CTs
-- **OpenClaw** - Orquestrador de agentes
-- **Ollama 0.21.0** - IA local (dados não saem do servidor)
-- **Node.js 20.x** - Runtime JavaScript
+### **Software por Container:**
+
+| CT | Software | Versão | Finalidade |
+|----|----------|--------|------------|
+| 101 | Ubuntu | 25.04 | Sistema base |
+| 101 | Python | 3.x | Parsing de emails |
+| 101 | BeautifulSoup | 4.x | Extração HTML |
+| 106 | Ubuntu | 25.04 | Sistema base |
+| 106 | OpenClaw | 1.0 | Orquestrador |
+| 106 | Ollama | 0.21.0 | IA local |
+| 106 | Node.js | 20.x | Runtime |
+| 106 | phi3:mini | 3.8B | Modelo LLM |
+| 102 | Ubuntu | 25.04 | Sistema base |
+| 102 | Samba | 4.x | Compartilhamento |
+| 102 | Rsync | 3.x | Backup incremental |
 
 ### **Dados Mockados:**
 - **19 transações** simuladas (gasolina, pedágio, almoço, lavanderia)
-- **Perfil de investidor** completo
+- **Perfil de investidor** completo (moderado, R$ 12k/mês, R$ 450k investidos)
 - **6 produtos financeiros** cadastrados
 
 ---
 
 ## 📊 Como Funciona na Prática
 
-### **Rotina Diária (19:00):**
-
-1. **CT 101 (Mails)** verifica emails do Nubank
-2. Valida autenticidade (@nubank.com.br)
-3. **CT 106 (Dr_Finance)** recebe dados
-4. Ollama analisa padrões de gastos
-5. Comparo com histórico (CT 102 - DATASVR)
-6. Gero relatório com:
-   - Resumo do dia
-   - Gastos por categoria
-   - Alertas de excesso
-   - Sugestões de economia
-7. Envio para Telegram/Email
-8. Faço backup no CT 102
-
-### **Exemplo de Relatório que Gero:**
+### **Rotina Diária Automática (19:00):**
 
 ```
-📊 Relatório Financeiro - 19/04/2026
-
-Resumo:
-- Gastos: R$ 320,00
-- Receitas: R$ 5.000,00
-- Saldo: +R$ 4.680,00
-
-Por Categoria:
-- Combustível: R$ 150,00 (47%)
-- Alimentação: R$ 120,00 (38%)
-- Transporte: R$ 45,50 (14%)
-- Serviços: R$ 70,00
-
-💡 Minha Sugestão:
-"Reduzir jantares fora gera economia de R$ 560/mês"
+┌─────────────────────────────────────────────────────────────────┐
+│  19:00 - CRON JOB DISPARA                                       │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  CT 101: Verifica emails do Nubank (últimas 24h)                │
+│  • Filtra @nubank.com.br                                        │
+│  • Valida anti-phishing                                         │
+│  • Extrai transações do HTML/PDF                                │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  CT 106: Recebe dados e analisa com Ollama                      │
+│  • Compara com histórico (CT 102)                               │
+│  • Identifica padrões por categoria                             │
+│  • Detecta anomalias (gastos acima da média)                    │
+│  • Gera sugestões de economia                                   │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Entrega do Relatório (Telegram/Email)                          │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │ 📊 Relatório Financeiro - 19/04/2026                      │ │
+│  │                                                           │ │
+│  │ Resumo:                                                   │ │
+│  │ • Gastos: R$ 320,00                                       │ │
+│  │ • Receitas: R$ 5.000,00                                   │ │
+│  │ • Saldo: +R$ 4.680,00                                     │ │
+│  │                                                           │ │
+│  │ Por Categoria:                                            │ │
+│  │ • Combustível: R$ 150,00 (47%) ⚠️                        │ │
+│  │ • Alimentação: R$ 120,00 (38%)                            │ │
+│  │ • Transporte: R$ 45,50 (14%)                              │ │
+│  │ • Serviços: R$ 70,00                                      │ │
+│  │                                                           │ │
+│  │ 💡 Sugestão:                                              │ │
+│  │ "Reduzir jantares fora gera economia de R$ 560/mês"       │ │
+│  └───────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  CT 102: Backup automático                                      │
+│  • Salva transacoes.csv                                         │
+│  • Salva relatorio.md                                           │
+│  • Atualiza logs de auditoria                                   │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -191,19 +413,32 @@ Por Categoria:
 ## 🔒 Por que Escolhi Essa Arquitetura
 
 ### **Privacidade Total:**
-- Ollama local: dados não saem do servidor
-- Rede isolada: 192.168.0.0/24 interna
-- Sem cloud: tudo no hardware local
+```
+┌─────────────────────────────────────────────────────────────┐
+│  DADOS FINANCEIROS NUNCA SAEM DO SERVIDOR                   │
+│                                                             │
+│  Internet ──▶ CT 101 ──▶ CT 106 ──▶ CT 102                 │
+│     │            │           │          │                   │
+│     │            │           │          │                   │
+│     └────────────┴───────────┴──────────┘                   │
+│                    │                                        │
+│                    ▼                                        │
+│           🚫 NENHUMA API EXTERNA                            │
+│           🚫 NENHUM CLOUD                                   │
+│           ✅ 100% LOCAL (Ollama CPU)                        │
+└─────────────────────────────────────────────────────────────┘
+```
 
-### **Segurança:**
-- Container isolado (CT 106) para dados financeiros
-- Validação anti-phishing
-- Backup automático no CT 102
+### **Segurança em Camadas:**
+1. **Container isolado** (CT 106) para dados financeiros
+2. **Validação anti-phishing** em 3 camadas
+3. **Backup automático** no CT 102 (recuperável)
+4. **Rede interna** isolada (192.168.0.0/24)
 
 ### **Custo Zero:**
-- Hardware próprio (sem mensalidades)
-- Software open-source
-- Sem APIs pagas
+- Hardware próprio (sem mensalidades de cloud)
+- Software open-source (Ollama, OpenClaw, Python)
+- Sem APIs pagas de banco
 
 ---
 
@@ -212,7 +447,7 @@ Por Categoria:
 ```
 dr-finance/
 ├── README.md              # Este arquivo (explicação do projeto)
-├── PITCH-3MINUTOS.md      # Roteiro da apresentação
+├── PITCH-3MINUTOS.md      # Roteiro da apresentação (3 min)
 ├── docs/                  # Documentação técnica
 │   ├── 01-documentacao-agente.md
 │   ├── 02-base-conhecimento.md
@@ -235,52 +470,76 @@ dr-finance/
 
 ### **Pré-requisitos:**
 - Proxmox VE instalado
-- Acesso ao host PVE1
+- Acesso ao host PVE1 (192.168.0.192)
+- Senha root: Rcmp814k@#
 
 ### **Comandos que Usei:**
 
 ```bash
-# CT 101 - Mails
+# ═══════════════════════════════════════════════════════════════
+# CT 101 - MAILS (Coletor de Emails)
+# ═══════════════════════════════════════════════════════════════
 pct create 101 local:vztmpl/ubuntu-25.04-standard_25.04-1.1_amd64.tar.zst \
   --hostname mails \
   --net0 name=eth0,bridge=vmbr0,ip=192.168.0.240/24,gw=192.168.0.1 \
   --memory 2048 --swap 1024 --cores 2 \
   --rootfs local-lvm:8 --features nesting=1 --onboot 1
 
-# CT 102 - DATASVR
+# ═══════════════════════════════════════════════════════════════
+# CT 102 - DATASVR (Armazenamento e Backup)
+# ═══════════════════════════════════════════════════════════════
 pct create 102 local:vztmpl/ubuntu-25.04-standard_25.04-1.1_amd64.tar.zst \
   --hostname datasvr \
   --net0 name=eth0,bridge=vmbr0,ip=192.168.0.72/24,gw=192.168.0.1 \
   --memory 2048 --swap 1024 --cores 2 \
   --rootfs local-lvm:50 --features nesting=1 --onboot 1
 
-# CT 106 - Dr_Finance
+# ═══════════════════════════════════════════════════════════════
+# CT 106 - Dr_Finance (Análise com IA)
+# ═══════════════════════════════════════════════════════════════
 pct create 106 local:vztmpl/ubuntu-25.04-standard_25.04-1.1_amd64.tar.zst \
   --hostname dr-finance \
   --net0 name=eth0,bridge=vmbr0,ip=192.168.0.231/24,gw=192.168.0.1 \
   --memory 2048 --swap 1024 --cores 2 \
   --rootfs local-lvm:20 --features nesting=1 --onboot 1
 
-# Instalar software no CT 106
+# ═══════════════════════════════════════════════════════════════
+# INSTALAÇÃO DE SOFTWARE NO CT 106
+# ═══════════════════════════════════════════════════════════════
+# Instalar Ollama (IA local)
 pct exec 106 -- curl -fsSL https://ollama.com/install.sh | sh
+
+# Instalar OpenClaw (orquestrador)
 pct exec 106 -- npm install -g openclaw
+
+# Baixar modelo LLM (phi3:mini - 3.8B parâmetros)
 pct exec 106 -- ollama pull phi3:mini
+
+# Configurar modo CPU-only (GPU AMD ROCm com problemas)
+pct set 106 --env OLLAMA_CPU_ONLY=1
 ```
 
 ---
 
 ## 📊 Dados Mockados que Criei
 
-### **transacoes.csv:**
-- 19 transações de exemplo
-- Categorias: Combustível, Alimentação, Transporte, Serviços, Renda
-- Valores reais de mercado
+### **transacoes.csv (19 transações):**
+
+| Data | Descrição | Categoria | Valor |
+|------|-----------|-----------|-------|
+| 2026-04-19 | Posto Ipiranga | Combustível | R$ 150,00 |
+| 2026-04-19 | Shell Box | Combustível | R$ 145,00 |
+| 2026-04-18 | Fogo de Chão | Alimentação | R$ 280,00 |
+| 2026-04-18 | McDonald's | Alimentação | R$ 45,00 |
+| 2026-04-17 | Pedágio SP-Rio | Transporte | R$ 45,50 |
+| 2026-04-17 | Lavanderia | Serviços | R$ 70,00 |
+| 2026-04-15 | Salário | Renda | R$ 5.000,00 |
 
 ### **perfil_investidor.json:**
-- Perfil: Moderado
-- Renda: R$ 12.000/mês
-- Investimentos: R$ 450.000
-- Metas: Reserva, Aposentadoria, Viagem
+- **Perfil:** Moderado
+- **Renda:** R$ 12.000/mês
+- **Investimentos:** R$ 450.000
+- **Metas:** Reserva de emergência, Aposentadoria, Viagem anual
 
 ---
 
@@ -317,5 +576,5 @@ GitHub: [acibabbadecastro](https://github.com/acibabbadecastro)
 > **"Desenvolvi este projeto para automatizar o controle de gastos pessoais, garantindo privacidade total dos dados usando IA local."**  
 > — Acib ABBADE
 
-**Última atualização:** 19/04/2026 23:52  
+**Última atualização:** 20/04/2026 00:02  
 **Ecossistema:** 3 containers (CT 101-Mails, CT 102-DATASVR, CT 106-Dr_Finance)
