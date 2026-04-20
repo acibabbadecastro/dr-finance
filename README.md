@@ -180,10 +180,11 @@ graph TD
 | **Backup** | Samba | 4.x | Compartilhamento |
 | **Rede** | Bridge vmbr0 | - | 192.168.0.0/24 |
 
-### **Dados Mockados:**
-- **19 transações** simuladas (gasolina, pedágio, almoço, lavanderia)
-- **Perfil de investidor** completo (moderado, R$ 12k/mês, R$ 450k investidos)
-- **6 produtos financeiros** cadastrados
+### **Dados Reais (Produção):**
+- **Nubank** - Conta real do usuário
+- **Extratos** - Via email (MailBot CT 101)
+- **Atualização** - Diária automática (19:00)
+- **Histórico** - Armazenado no DATASVR (CT 102)
 
 ---
 
@@ -386,14 +387,14 @@ pct set 106 --env OLLAMA_CPU_ONLY=1
 ### **Status:**
 - ✅ Documentação completa
 - ✅ 3 containers criados (CT 101, CT 102, CT 106)
-- ✅ Dados mockados cadastrados
+- ✅ **PRODUÇÃO REAL** - Dados do Nubank
 - ✅ 6 diagramas Mermaid profissionais
 - ✅ Pitch de 3 minutos
 
 ### **Próximos Passos:**
-- ⏳ Finalizar instalação do OpenClaw no CT 106
 - ⏳ Configurar cron jobs (19:00 diário)
-- ⏳ Testar integração completa (Mails → Dr_Finance → DATASVR)
+- ⏳ Ajustes finos de análise
+- ⏳ Melhorias contínuas
 
 ---
 
