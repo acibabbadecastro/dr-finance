@@ -21,20 +21,112 @@ Não sou um chatbot genérico. Sou um **especialista financeiro** rodando em con
 
 Seu ecossistema é composto por **3 containers especializados** que trabalham juntos:
 
+### **Diagrama 1: Arquitetura do Sistema**
+
 ```
-┌─────────────────────────────────────────────────────┐
-│  PVE1 - Proxmox (192.168.0.192)                    │
-│                                                      │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────┐ │
-│  │  CT 101     │───▶│  CT 106     │───▶│ CT 102  │ │
-│  │  Mails      │    │ Dr_Finance  │    │DATASVR  │ │
-│  │  (Emails)   │    │  (Analise)  │    │(Backup) │ │
-│  │  .240       │    │   .231      │    │  .72    │ │
-│  └─────────────┘    └─────────────┘    └─────────┘ │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────┐
+│  PVE1 - Proxmox Virtual Environment                        │
+│  IP: 192.168.0.192                                         │
+│  Hardware: Ryzen 5 5600X, 30GB RAM, SSD 223GB             │
+│                                                             │
+│  ┌───────────────────────────────────────────────────┐    │
+│  │  REDE INTERNA: 192.168.0.0/24 (Bridge vmbr0)     │    │
+│  │                                                    │    │
+│  │   ┌──────────┐      ┌──────────┐      ┌────────┐ │    │
+│  │   │ CT 101   │─────▶│ CT 106   │─────▶│ CT 102 │ │    │
+│  │   │ Mails    │      │ Dr_      │      │DATASVR │ │    │
+│  │   │ .240     │      │ Finance  │      │ .72    │ │    │
+│  │   │ (Emails) │      │ (.231)   │      │(Backup)│ │    │
+│  │   └──────────┘      └──────────┘      └────────┘ │    │
+│  │                                                    │    │
+│  └───────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-### Os 3 Containers:
+### **Diagrama 2: Fluxo de Dados**
+
+```
+┌─────────────┐
+│  Gmail      │  1. Email do Nubank chega
+│  (Internet) │
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  CT 101     │  2. Captura e valida email
+│  Mails      │  3. Filtra @nubank.com.br
+│  .240       │  4. Extrai dados (HTML/PDF)
+└──────┬──────┘
+       │ (envia dados)
+       ▼
+┌─────────────┐
+│  CT 106     │  5. Ollama analisa transações
+│  Dr_Finance │  6. Identifica padrões
+│  .231       │  7. Gera relatório + sugestões
+└──────┬──────┘
+       │ (envia relatório)
+       ▼
+┌─────────────┐
+│  CT 102     │  8. Backup automático
+│  DATASVR    │  9. Armazena histórico
+│  .72        │ 10. Disponível para consulta
+└──────┬──────┘
+       │
+       ▼
+┌─────────────┐
+│  Você       │  Relatório no Telegram/Email
+│  (Telegram) │
+└─────────────┘
+```
+
+### **Diagrama 3: Detalhe de Cada Container**
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  CT 101 - MAILS (192.168.0.240)                             │
+│  Função: Coletor de Emails                                  │
+│  Recursos: 2GB RAM, 2 cores, 8GB disco                      │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  • Lê Gmail automaticamente                          │  │
+│  │  • Filtra @nubank.com.br                             │  │
+│  │  • Valida anti-phishing                              │  │
+│  │  • Extrai HTML/PDF                                   │  │
+│  │  • Envia para CT 106                                 │  │
+│  └──────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌──────────────────────────────────────────────────────────────┐
+│  CT 106 - Dr_Finance (192.168.0.231)                        │
+│  Função: Análise Financeira com IA                          │
+│  Recursos: 2GB RAM, 2 cores, 20GB disco                     │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  • OpenClaw (orquestrador)                           │  │
+│  │  • Ollama 0.21.0 (IA local)                          │  │
+│  │  • Node.js 20.x                                      │  │
+│  │  • Analisa transações                                │  │
+│  │  • Identifica padrões                                │  │
+│  │  • Gera relatórios (19:00 automático)                │  │
+│  │  • Sugere economia                                   │  │
+│  └──────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────┘
+                          │
+                          ▼
+┌──────────────────────────────────────────────────────────────┐
+│  CT 102 - DATASVR (192.168.0.72)                            │
+│  Função: Armazenamento e Backup                             │
+│  Recursos: 2GB RAM, 2 cores, 50GB disco                     │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │  • Samba (\\192.168.0.72\LAN\)                       │  │
+│  │  • Backup automático dos CTs 101 e 106               │  │
+│  │  • Histórico financeiro (anos)                       │  │
+│  │  • /home/master/LAN/MEMORIES/STARK/05-FINANCAS/      │  │
+│  │  • Logs de auditoria                                 │  │
+│  └──────────────────────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Resumo dos 3 Containers:
 
 | CT | Nome | IP | Função | Recursos |
 |----|------|-----|--------|----------|
