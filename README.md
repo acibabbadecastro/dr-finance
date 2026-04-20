@@ -157,17 +157,14 @@ graph TD
 
 ### **Infraestrutura:**
 
-```mermaid
-pie title Distribuição de Recursos (30GB RAM Total)
-    "CT 100 - Stark" : 4
-    "CT 101 - Mails" : 2
-    "CT 102 - DATASVR" : 2
-    "CT 103 - BD" : 2
-    "CT 104 - SGN" : 2
-    "CT 106 - Dr_Finance" : 2
-    "CT 107-112 - SERVMIL" : 10
-    "Host Proxmox" : 6
-```
+**3 Containers Proxmox:**
+
+| CT | RAM | CPU | Disk | Função |
+|----|-----|-----|------|--------|
+| 101 | 2GB | 2 cores | 8GB | Coleta emails |
+| 102 | 2GB | 2 cores | 50GB | Backup |
+| 106 | 2GB | 2 cores | 20GB | Análise IA |
+| **Total** | **6GB** | **6 cores** | **78GB** | - |
 
 ### **Stack Tecnológico:**
 
