@@ -1,0 +1,20 @@
+data,hora,tipo,descricao,valor,categoria,estabelecimento,local
+2026-04-14,08:15,Debito,Posto Ipiranga,150.00,Combustivel,Posto Ipiranga,Sao Paulo - SP
+2026-04-14,12:30,Credito,Restaurante Fogo de Chao,89.90,Almoco,Fogo de Chao,Sao Paulo - SP
+2026-04-14,18:45,PIX,Aluguel,2500.00,Moradia,Proprietario,Sao Paulo - SP
+2026-04-15,07:00,Debito,Pedagio SP-Rio,45.50,Transporte,Concessionaria ViaLagos,Sao Paulo - SP
+2026-04-15,12:15,Credito,Restaurante Self-Service,32.80,Almoco,Self-Service Center,Sao Paulo - SP
+2026-04-15,19:30,Debito,Lavanderia Clean,65.00,Servicos,Lavanderia Clean,Sao Paulo - SP
+2026-04-16,08:30,Debito,Posto Shell,145.00,Combustivel,Posto Shell,Sao Paulo - SP
+2026-04-16,13:00,Credito,McDonalds,28.90,Almoco,McDonalds,Sao Paulo - SP
+2026-04-16,16:00,PIX,Freelancer Design,450.00,Renda,Freelancer,Sao Paulo - SP
+2026-04-17,07:15,Debito,Pedagio Rio-SP,45.50,Transporte,Concessionaria ViaLagos,Rio de Janeiro - RJ
+2026-04-17,12:45,Credito,Restaurante Por Kg,41.20,Almoco,Restaurante Por Kg,Sao Paulo - SP
+2026-04-17,18:00,Debito,Academia SmartFit,89.90,Saude,SmartFit,Sao Paulo - SP
+2026-04-18,09:00,Debito,Posto Ipiranga,160.00,Combustivel,Posto Ipiranga,Sao Paulo - SP
+2026-04-18,13:30,Credito,Pizza Hut,75.00,Almoco,Pizza Hut,Sao Paulo - SP
+2026-04-18,20:00,Credito,Cinema UCI,60.00,Lazer,UCI Cinemas,Sao Paulo - SP
+2026-04-19,08:00,Debito,Pedagio Marginal,12.90,Transporte,SPVia,Sao Paulo - SP
+2026-04-19,12:00,Credito,Restaurante Japonês,120.00,Almoco,Kinoshita,Sao Paulo - SP
+2026-04-19,15:30,Debito,Lavanderia Clean,70.00,Servicos,Lavanderia Clean,Sao Paulo - SP
+2026-04-19,19:00,PIX,Salario,5000.00,Renda,Empresa XYZ,Sao Paulo - SP

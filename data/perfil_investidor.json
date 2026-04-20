@@ -1,0 +1,73 @@
+{
+  "cliente": {
+    "nome": "Acib ABBADE",
+    "cpf": "307.572.858-64",
+    "email": "abbade@outlook.com",
+    "telefone": "+55 11 99999-9999",
+    "data_nascimento": "1985-06-15",
+    "profissao": "Empresario - Tecnologia"
+  },
+  "perfil_investidor": {
+    "tipo": "Moderado",
+    "data_avaliacao": "2026-01-15",
+    "objetivo": "Acumulo de patrimonio",
+    "prazo": "Longo prazo (10+ anos)",
+    "tolerancia_risco": "Media",
+    "conhecimento": "Intermediario"
+  },
+  "situacao_financeira": {
+    "renda_mensal": 12000.00,
+    "gastos_medios": 8500.00,
+    "capacidade_poupanca": 3500.00,
+    "reserva_emergencia": 25000.00,
+    "patrimonio_total": 450000.00
+  },
+  "investimentos_atuais": {
+    "renda_fixa": {
+      "tesouro_direto": 80000.00,
+      "cdb": 120000.00,
+      "lci_lca": 50000.00,
+      "total": 250000.00
+    },
+    "renda_variavel": {
+      "acoes": 95000.00,
+      "fundos_imobiliarios": 65000.00,
+      "criptomoedas": 15000.00,
+      "total": 175000.00
+    },
+    "outros": {
+      "imoveis": 0.00,
+      "ouro": 5000.00,
+      "total": 5000.00
+    }
+  },
+  "metas": [
+    {
+      "nome": "Reserva de Emergencia",
+      "valor_alvo": 30000.00,
+      "valor_atual": 25000.00,
+      "prazo": "6 meses",
+      "status": "Em andamento"
+    },
+    {
+      "nome": "Aposentadoria",
+      "valor_alvo": 1000000.00,
+      "valor_atual": 450000.00,
+      "prazo": "20 anos",
+      "status": "Em andamento"
+    },
+    {
+      "nome": "Viagem Internacional",
+      "valor_alvo": 25000.00,
+      "valor_atual": 8000.00,
+      "prazo": "18 meses",
+      "status": "Em andamento"
+    }
+  ],
+  "preferencias": {
+    "notificacoes": true,
+    "relatorio_frequencia": "Semanal",
+    "canal_preferencial": "Telegram",
+    "idioma": "pt-BR"
+  }
+}

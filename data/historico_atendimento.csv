@@ -1,0 +1,15 @@
+data,hora,cliente,canal,assunto,status,resolucao,tempo_atendimento
+2026-04-14,08:30,Joao Silva,Telegram,Consulta saldo,Resolvido,Saldo informado: R$ 3.450,00,2min
+2026-04-14,12:15,Maria Santos,Email,Alerta gasto excessivo,Resolvido,Alerta enviado por email,5min
+2026-04-15,09:00,Joao Silva,Telegram,Relatorio semanal,Resolvido,Relatorio enviado,3min
+2026-04-15,14:30,Pedro Oliveira,Dashboard,Categoria gastos,Resolvido,Detalhamento fornecido,4min
+2026-04-16,08:45,Maria Santos,Telegram,Sugestao economia,Resolvido,3 sugestoes enviadas,6min
+2026-04-16,16:20,Joao Silva,Email,Comparativo mensal,Resolvido,Comparativo enviado,5min
+2026-04-17,10:00,Ana Costa,Telegram,Alerta orcamento,Resolvido,Alerta 80% orcamento,2min
+2026-04-17,15:45,Pedro Oliveira,Dashboard,Extrato completo,Resolvido,Extrato exportado,8min
+2026-04-18,09:30,Joao Silva,Telegram,Meta economia,Em andamento,Meta definida: R$ 500/mes,3min
+2026-04-18,14:00,Maria Santos,Email,Assinaturas ativas,Resolvido,5 assinaturas listadas,7min
+2026-04-19,08:15,Ana Costa,Telegram,Relatorio diario,Resolvido,Relatorio enviado,3min
+2026-04-19,11:30,Pedro Oliveira,Dashboard,Gastos por categoria,Resolvido,Grafico gerado,5min
+2026-04-19,15:00,Joao Silva,Telegram,Previsao gastos,Resolvido,Previsao: R$ 4.200,00,4min
+2026-04-19,18:45,Maria Santos,Email,Exportacao CSV,Resolvido,Arquivo enviado,6min

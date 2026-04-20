@@ -1,0 +1,101 @@
+{
+  "produtos": [
+    {
+      "id": "TF001",
+      "nome": "Tesouro Direto Selic 2029",
+      "tipo": "Renda Fixa",
+      "categoria": "Tesouro Direto",
+      "rentabilidade": "100% CDI",
+      "risco": "Baixo",
+      "liquidez": "Diaria",
+      "investimento_minimo": 30.00,
+      "taxa_administracao": "0.20%",
+      "imposto_renda": "Regressivo",
+      "garantia": "Tesouro Nacional",
+      "descricao": "Titulo publico federal pos-fixado"
+    },
+    {
+      "id": "CDB001",
+      "nome": "CDB Banco Inter 110% CDI",
+      "tipo": "Renda Fixa",
+      "categoria": "CDB",
+      "rentabilidade": "110% CDI",
+      "risco": "Baixo",
+      "liquidez": "Diaria",
+      "investimento_minimo": 100.00,
+      "taxa_administracao": "0.00%",
+      "imposto_renda": "Regressivo",
+      "garantia": "FGC (ate 250k)",
+      "descricao": "Certificado de Deposito Bancario"
+    },
+    {
+      "id": "LCI001",
+      "nome": "LCI Caixa 90% CDI",
+      "tipo": "Renda Fixa",
+      "categoria": "LCI",
+      "rentabilidade": "90% CDI",
+      "risco": "Baixo",
+      "liquidez": "90 dias",
+      "investimento_minimo": 1000.00,
+      "taxa_administracao": "0.00%",
+      "imposto_renda": "Isento",
+      "garantia": "FGC (ate 250k)",
+      "descricao": "Letra de Credito Imobiliario"
+    },
+    {
+      "id": "ACAO001",
+      "nome": "Petrobras PN (PETR4)",
+      "tipo": "Renda Variavel",
+      "categoria": "Acoes",
+      "rentabilidade": "Variavel",
+      "risco": "Alto",
+      "liquidez": "Diaria",
+      "investimento_minimo": 30.00,
+      "taxa_administracao": "Corretagem",
+      "imposto_renda": "15% sobre ganho",
+      "garantia": "Nenhuma",
+      "descricao": "Acoes ordinarias Petrobras"
+    },
+    {
+      "id": "FII001",
+      "nome": "HGLG11 - CSHG Logistica",
+      "tipo": "Renda Variavel",
+      "categoria": "Fundo Imobiliario",
+      "rentabilidade": "Dividendos mensais",
+      "risco": "Medio",
+      "liquidez": "Diaria",
+      "investimento_minimo": 100.00,
+      "taxa_administracao": "0.20%",
+      "imposto_renda": "Isento (pessoa fisica)",
+      "garantia": "Nenhuma",
+      "descricao": "Fundo de Investimento Imobiliario"
+    },
+    {
+      "id": "CRIPTO001",
+      "nome": "Bitcoin (BTC)",
+      "tipo": "Renda Variavel",
+      "categoria": "Criptomoeda",
+      "rentabilidade": "Variavel",
+      "risco": "Muito Alto",
+      "liquidez": "24/7",
+      "investimento_minimo": 10.00,
+      "taxa_administracao": "Corretagem",
+      "imposto_renda": "15% sobre ganho",
+      "garantia": "Nenhuma",
+      "descricao": "Criptomoeda descentralizada"
+    }
+  ],
+  "metricas_mercado": {
+    "cdi_atual": "10.15%",
+    "selic_atual": "10.50%",
+    "ipca_12m": "4.50%",
+    "dolar_comercial": "R$ 5.15",
+    "ibovespa": "125.000 pts",
+    "data_atualizacao": "2026-04-19"
+  },
+  "recomendacoes_dr_finance": {
+    "perfil_conservador": ["TF001", "CDB001", "LCI001"],
+    "perfil_moderado": ["TF001", "CDB001", "FII001"],
+    "perfil_arrojado": ["ACAO001", "FII001", "CRIPTO001"]
+  }
+}
