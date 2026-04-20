@@ -325,7 +325,7 @@ dr-finance/
 ### **Pré-requisitos:**
 - Proxmox VE instalado
 - Acesso ao host PVE1 (192.168.0.192)
-- Senha root: Rcmp814k@#
+- Credenciais root (não compartilhar)
 
 ### **Comandos que Usei:**
 
