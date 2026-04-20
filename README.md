@@ -1,6 +1,7 @@
-# Dr_Finance 🤖
+# Dr_Finance - Agente de Controle de Gastos Pessoais
 
-> **Seu Guardião Financeiro Pessoal**
+> **Projeto desenvolvido por Acib ABBADE**  
+> Bootcamp DIO - Lab BIA do Futuro
 
 [![Status](https://img.shields.io/badge/status-em%20producao-brightgreen)]()
 [![Proxmox](https://img.shields.io/badge/Proxmox-CT106-orange)]()
@@ -9,17 +10,19 @@
 
 ---
 
-## 👋 Olá, eu sou o Dr_Finance
+## 👋 Apresentação
 
-Fui criado **exclusivamente** para uma missão: **cuidar das suas finanças 24/7**.
+Olá, sou **Acib ABBADE** e desenvolvi o **Dr_Finance** como projeto do Bootcamp DIO - Lab BIA do Futuro.
 
-Não sou um chatbot genérico. Sou um **especialista financeiro** rodando em container isolado no seu servidor Proxmox.
+Escolhi criar um **agente de controle de gastos pessoais** porque identifiquei que 90% das pessoas não têm controle real dos seus gastos. Recebemos extratos do banco todos os dias, mas não analisamos padrões.
+
+Minha solução automatiza essa análise usando IA local, garantindo privacidade total dos dados.
 
 ---
 
-## 🏗️ Meu Ecossistema: 3 Containers
+## 🏗️ Minha Arquitetura: 3 Containers Proxmox
 
-Seu ecossistema é composto por **3 containers especializados** que trabalham juntos:
+Decidi usar **3 containers no Proxmox** para isolar cada função do sistema:
 
 ### **Diagrama 1: Arquitetura do Sistema**
 
@@ -53,22 +56,22 @@ Seu ecossistema é composto por **3 containers especializados** que trabalham ju
        │
        ▼
 ┌─────────────┐
-│  CT 101     │  2. Captura e valida email
+│  CT 101     │  2. Capturo e valido email
 │  Mails      │  3. Filtra @nubank.com.br
-│  .240       │  4. Extrai dados (HTML/PDF)
+│  .240       │  4. Extraio dados (HTML/PDF)
 └──────┬──────┘
        │ (envia dados)
        ▼
 ┌─────────────┐
 │  CT 106     │  5. Ollama analisa transações
-│  Dr_Finance │  6. Identifica padrões
-│  .231       │  7. Gera relatório + sugestões
+│  Dr_Finance │  6. Identifico padrões
+│  .231       │  7. Gero relatório + sugestões
 └──────┬──────┘
        │ (envia relatório)
        ▼
 ┌─────────────┐
 │  CT 102     │  8. Backup automático
-│  DATASVR    │  9. Armazena histórico
+│  DATASVR    │  9. Armazeno histórico
 │  .72        │ 10. Disponível para consulta
 └──────┬──────┘
        │
@@ -79,6 +82,10 @@ Seu ecossistema é composto por **3 containers especializados** que trabalham ju
 └─────────────┘
 ```
 
+---
+
+## 📋 Os 3 Containers que Criei
+
 ### **Diagrama 3: Detalhe de Cada Container**
 
 ```
@@ -87,11 +94,7 @@ Seu ecossistema é composto por **3 containers especializados** que trabalham ju
 │  Função: Coletor de Emails                                  │
 │  Recursos: 2GB RAM, 2 cores, 8GB disco                      │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │  • Lê Gmail automaticamente                          │  │
-│  │  • Filtra @nubank.com.br                             │  │
-│  │  • Valida anti-phishing                              │  │
-│  │  • Extrai HTML/PDF                                   │  │
-│  │  • Envia para CT 106                                 │  │
+│  │  • Lê Gmail automaticamente                          │  │\n│  │  • Filtra @nubank.com.br                             │  │\n│  │  • Valida anti-phishing                              │  │\n│  │  • Extrai HTML/PDF                                   │  │\n│  │  • Envia para CT 106                                 │  │
 │  └──────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────┘
                           │
@@ -101,13 +104,7 @@ Seu ecossistema é composto por **3 containers especializados** que trabalham ju
 │  Função: Análise Financeira com IA                          │
 │  Recursos: 2GB RAM, 2 cores, 20GB disco                     │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │  • OpenClaw (orquestrador)                           │  │
-│  │  • Ollama 0.21.0 (IA local)                          │  │
-│  │  • Node.js 20.x                                      │  │
-│  │  • Analisa transações                                │  │
-│  │  • Identifica padrões                                │  │
-│  │  • Gera relatórios (19:00 automático)                │  │
-│  │  • Sugere economia                                   │  │
+│  │  • OpenClaw (orquestrador)                           │  │\n│  │  • Ollama 0.21.0 (IA local)                          │  │\n│  │  • Node.js 20.x                                      │  │\n│  │  • Analisa transações                                │  │\n│  │  • Identifica padrões                                │  │\n│  │  • Gera relatórios (19:00 automático)                │  │\n│  │  • Sugere economia                                   │  │
 │  └──────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────┘
                           │
@@ -117,142 +114,59 @@ Seu ecossistema é composto por **3 containers especializados** que trabalham ju
 │  Função: Armazenamento e Backup                             │
 │  Recursos: 2GB RAM, 2 cores, 50GB disco                     │
 │  ┌──────────────────────────────────────────────────────┐  │
-│  │  • Samba (\\192.168.0.72\LAN\)                       │  │
-│  │  • Backup automático dos CTs 101 e 106               │  │
-│  │  • Histórico financeiro (anos)                       │  │
-│  │  • /home/master/LAN/MEMORIES/STARK/05-FINANCAS/      │  │
-│  │  • Logs de auditoria                                 │  │
+│  │  • Samba (\\192.168.0.72\LAN\)                       │  │\n│  │  • Backup automático dos CTs 101 e 106               │  │\n│  │  • Histórico financeiro (anos)                       │  │\n│  │  • /home/master/LAN/MEMORIES/STARK/05-FINANCAS/      │  │\n│  │  • Logs de auditoria                                 │  │
 │  └──────────────────────────────────────────────────────┘  │
 └──────────────────────────────────────────────────────────────┘
 ```
 
-### Resumo dos 3 Containers:
+### Resumo dos 3 CTs:
 
 | CT | Nome | IP | Função | Recursos |
 |----|------|-----|--------|----------|
-| **101** | Mails | 192.168.0.240 | Lê emails do Nubank, valida anti-phishing | 2GB RAM, 2 cores, 8GB |
-| **102** | DATASVR | 192.168.0.72 | Backup de tudo, histórico completo | 2GB RAM, 2 cores, 50GB |
-| **106** | Dr_Finance | 192.168.0.231 | **EU** - Analiso transações, gero relatórios | 2GB RAM, 2 cores, 20GB |
+| **101** | Mails | 192.168.0.240 | Coleta emails do Nubank | 2GB RAM, 2 cores, 8GB |
+| **102** | DATASVR | 192.168.0.72 | Backup e histórico | 2GB RAM, 2 cores, 50GB |
+| **106** | Dr_Finance | 192.168.0.231 | Análise com IA | 2GB RAM, 2 cores, 20GB |
 
 ---
 
-## 📋 Função de Cada Container
+## 🛠️ Tecnologias que Usei
 
-### **CT 101 - Mails** (192.168.0.240)
+### **Infraestrutura:**
+- **Proxmox VE** - Hipervisor para containers
+- **LXC** - Containers Linux (mais leves que VMs)
+- **Rede 192.168.0.0/24** - Rede interna isolada
 
-**Função:** Coletor de Emails
+### **Software:**
+- **Ubuntu 25.04** - Sistema operacional dos CTs
+- **OpenClaw** - Orquestrador de agentes
+- **Ollama 0.21.0** - IA local (dados não saem do servidor)
+- **Node.js 20.x** - Runtime JavaScript
 
-**O que faz:**
-- Lê sua caixa de entrada do Gmail automaticamente
-- Filtra emails do Nubank (`@nubank.com.br`)
-- Valida autenticidade (anti-phishing)
-- Extrai dados do HTML e anexos PDF
-- Envia dados extraídos para o CT 106
-
-**Trabalho Diário:** 4 vezes ao dia (08:00, 12:00, 16:00, 19:00)
-
-**Segurança:** Descarta emails suspeitos, não clica em links
-
----
-
-### **CT 102 - DATASVR** (192.168.0.72)
-
-**Função:** Armazenamento e Backup
-
-**O que faz:**
-- Armazena TODO o histórico financeiro
-- Backup automático dos outros 2 CTs
-- Compartilhamento via Samba (`\\192.168.0.72\LAN\`)
-- Mantém cópias de segurança por anos
-
-**Estrutura:**
-```
-/home/master/LAN/
-├── MEMORIES/STARK/05-FINANCAS/  (Extratos, relatórios)
-├── BACKUP_CRITICO/               (Backup dos CTs)
-└── LOGS/                         (Logs do sistema)
-```
-
-**Por que é importante:** Se CT 106 falhar, o histórico está seguro aqui
+### **Dados Mockados:**
+- **19 transações** simuladas (gasolina, pedágio, almoço, lavanderia)
+- **Perfil de investidor** completo
+- **6 produtos financeiros** cadastrados
 
 ---
 
-### **CT 106 - Dr_Finance** (192.168.0.231)
+## 📊 Como Funciona na Prática
 
-**Função:** Análise Financeira com IA
+### **Rotina Diária (19:00):**
 
-**O que faz:**
-- **EU SOU ESTE CONTAINER** 🤖
-- Recebe dados do CT 101 (Mails)
-- Analisa transações com Ollama (IA local)
-- Identifica padrões de gastos
-- Gera alertas e sugestões de economia
-- Cria relatórios inteligentes
+1. **CT 101 (Mails)** verifica emails do Nubank
+2. Valida autenticidade (@nubank.com.br)
+3. **CT 106 (Dr_Finance)** recebe dados
+4. Ollama analisa padrões de gastos
+5. Comparo com histórico (CT 102 - DATASVR)
+6. Gero relatório com:
+   - Resumo do dia
+   - Gastos por categoria
+   - Alertas de excesso
+   - Sugestões de economia
+7. Envio para Telegram/Email
+8. Faço backup no CT 102
 
-**Trabalho Diário:** 19:00 (automático)
-
-**O que entrego:**
-- Relatório diário (resumo do dia)
-- Relatório semanal (comparativo)
-- Relatório mensal (fechamento)
-- Alertas em tempo real
-- Sugestões personalizadas
-
-**Exemplo:**
-```
-"Seus gastos com Restaurantes estão 180% acima da média.
-💡 Sugestão: Reduzir de 5 para 3 jantares/semana
-   Economia: R$ 560/mês (R$ 6.720/ano)"
-```
-
----
-
-## 🔄 Como os 3 Trabalham Juntos
-
-### Fluxo Completo:
-
-```
-1. Email do Nubank chega no Gmail
-         │
-         ▼
-2. CT 101 (Mails) captura
-   ├─ Valida: @nubank.com.br
-   ├─ Extrai: HTML/PDF
-   └─ Envia para CT 106
-         │
-         ▼
-3. CT 106 (Dr_Finance) analisa
-   ├─ Ollama processa
-   ├─ Identifica padrões
-   ├─ Gera alertas
-   └─ Cria sugestões
-         │
-         ▼
-4. Relatório enviado para você
-   ├─ Telegram
-   ├─ Email
-   └─ Dashboard
-         │
-         ▼
-5. CT 102 (DATASVR) faz backup
-   └─ /home/master/LAN/MEMORIES/STARK/05-FINANCAS/
-```
-
----
-
-## 📊 O que Faço Todo Dia
-
-### Às 19:00, automaticamente:
-
-1. CT 101 verifica emails do Nubank
-2. Valida autenticidade (anti-phishing)
-3. Extraio transações (PIX, débito, crédito)
-4. Analiso padrões com IA local (Ollama)
-5. Comparo com histórico (DATASVR)
-6. Gero relatório com alertas e sugestões
-7. Backup automático no CT 102
-
-### Exemplo de Relatório:
+### **Exemplo de Relatório que Gero:**
 
 ```
 📊 Relatório Financeiro - 19/04/2026
@@ -268,40 +182,62 @@ Por Categoria:
 - Transporte: R$ 45,50 (14%)
 - Serviços: R$ 70,00
 
-💡 Sugestão:
+💡 Minha Sugestão:
 "Reduzir jantares fora gera economia de R$ 560/mês"
 ```
 
 ---
 
-## 🔒 Segurança
+## 🔒 Por que Escolhi Essa Arquitetura
 
-### Por que 3 Containers?
+### **Privacidade Total:**
+- Ollama local: dados não saem do servidor
+- Rede isolada: 192.168.0.0/24 interna
+- Sem cloud: tudo no hardware local
 
-| Vantagem | Explicação |
-|----------|-----------|
-| **Isolamento** | Cada função em CT separado |
-| **Segurança** | Dados financeiros isolados no CT 106 |
-| **Performance** | Recursos dedicados por CT |
-| **Backup** | CT 102 faz backup dos outros 2 |
-| **Manutenção** | Atualiza um sem afetar os outros |
+### **Segurança:**
+- Container isolado (CT 106) para dados financeiros
+- Validação anti-phishing
+- Backup automático no CT 102
 
-### Privacidade Total:
-
-- **Ollama local:** Dados não saem do servidor
-- **Rede isolada:** 192.168.0.0/24 interna
-- **Sem cloud:** Tudo no seu hardware
+### **Custo Zero:**
+- Hardware próprio (sem mensalidades)
+- Software open-source
+- Sem APIs pagas
 
 ---
 
-## 🚀 Instalação
+## 📁 Estrutura do Repositório
 
-### Pré-requisitos:
+```
+dr-finance/
+├── README.md              # Este arquivo (explicação do projeto)
+├── PITCH-3MINUTOS.md      # Roteiro da apresentação
+├── docs/                  # Documentação técnica
+│   ├── 01-documentacao-agente.md
+│   ├── 02-base-conhecimento.md
+│   ├── 03-prompts.md
+│   ├── 04-metricas.md
+│   └── 05-pitch.md
+├── data/                  # Dados mockados
+│   ├── transacoes.csv           (19 transações)
+│   ├── historico_atendimento.csv (14 atendimentos)
+│   ├── perfil_investidor.json   (Perfil completo)
+│   └── produtos_financeiros.json (6 produtos)
+├── src/                   # Código futuro
+├── examples/              # Exemplos
+└── assets/                # Imagens
+```
 
+---
+
+## 🚀 Como Instalar (se quiser replicar)
+
+### **Pré-requisitos:**
 - Proxmox VE instalado
 - Acesso ao host PVE1
 
-### Criar os 3 Containers:
+### **Comandos que Usei:**
 
 ```bash
 # CT 101 - Mails
@@ -324,12 +260,8 @@ pct create 106 local:vztmpl/ubuntu-25.04-standard_25.04-1.1_amd64.tar.zst \
   --net0 name=eth0,bridge=vmbr0,ip=192.168.0.231/24,gw=192.168.0.1 \
   --memory 2048 --swap 1024 --cores 2 \
   --rootfs local-lvm:20 --features nesting=1 --onboot 1
-```
 
-### Instalar Software:
-
-```bash
-# CT 106 - Dr_Finance
+# Instalar software no CT 106
 pct exec 106 -- curl -fsSL https://ollama.com/install.sh | sh
 pct exec 106 -- npm install -g openclaw
 pct exec 106 -- ollama pull phi3:mini
@@ -337,44 +269,14 @@ pct exec 106 -- ollama pull phi3:mini
 
 ---
 
-## 📚 Estrutura do Repositório
+## 📊 Dados Mockados que Criei
 
-```
-dr-finance/
-├── README.md              # Este arquivo
-├── docs/
-│   ├── 01-documentacao-agente.md
-│   ├── 02-base-conhecimento.md
-│   ├── 03-prompts.md
-│   ├── 04-metricas.md
-│   └── 05-pitch.md
-├── data/
-│   ├── transacoes.csv     # Transações simuladas
-│   ├── historico_atendimento.csv
-│   ├── perfil_investidor.json
-│   └── produtos_financeiros.json
-├── src/                   # Código futuro
-├── examples/              # Exemplos
-└── assets/                # Imagens
-```
+### **transacoes.csv:**
+- 19 transações de exemplo
+- Categorias: Combustível, Alimentação, Transporte, Serviços, Renda
+- Valores reais de mercado
 
----
-
-## 📊 Dados Simulados
-
-### transacoes.csv
-
-19 transações de exemplo:
-- Combustível: Posto Ipiranga, Shell
-- Alimentação: Fogo de Chão, McDonalds, Pizza Hut
-- Transporte: Pedágios SP-Rio
-- Serviços: Lavanderia, Academia
-- Renda: Salário, Freelancer
-
-### perfil_investidor.json
-
-Perfil completo do investidor:
-- Dados pessoais
+### **perfil_investidor.json:**
 - Perfil: Moderado
 - Renda: R$ 12.000/mês
 - Investimentos: R$ 450.000
@@ -382,30 +284,38 @@ Perfil completo do investidor:
 
 ---
 
-## 🎓 Sobre
+## 🎓 Sobre o Projeto
 
 **Bootcamp:** DIO - Lab BIA do Futuro  
 **Autor:** Acib ABBADE  
-**Minha Persona:** Dr_Finance  
-**Status:** Em produção
+**Problema Escolhido:** Controle de gastos pessoais  
+**Solução:** Agente que analisa emails do Nubank e sugere economia
 
-### Containers:
+### **Status:**
+- ✅ Documentação completa
+- ✅ CT 106 criado no Proxmox
+- ✅ Dados mockados cadastrados
+- ✅ 3 diagramas de arquitetura
+- ✅ Pitch de 3 minutos
 
-| CT | Status | Função |
-|----|--------|--------|
-| 101 - Mails | ✅ Configurado | Emails |
-| 102 - DATASVR | ✅ Configurado | Backup |
-| 106 - Dr_Finance | ⏳ Em configuração | Análise |
-
----
-
-> **"Seu dinheiro trabalha duro. Eu trabalho para ele trabalhar melhor."**  
-> — Dr_Finance
-
-**GitHub:** https://github.com/acibabbadecastro/dr-finance  
-**Contato:** @Acib_Abbade | abbade@outlook.com
+### **Próximos Passos:**
+- ⏳ Finalizar instalação do OpenClaw no CT 106
+- ⏳ Configurar cron jobs (19:00 diário)
+- ⏳ Testar integração completa
 
 ---
 
-**Última atualização:** 19/04/2026 23:35  
-**Ecossistema:** 3 containers (CT 101, CT 102, CT 106)
+## 📞 Contato
+
+**Acib ABBADE**  
+Telegram: [@Acib_Abbade](https://t.me/Acib_Abbade)  
+Email: abbade@outlook.com  
+GitHub: [acibabbadecastro](https://github.com/acibabbadecastro)
+
+---
+
+> **"Desenvolvi este projeto para automatizar o controle de gastos pessoais, garantindo privacidade total dos dados usando IA local."**  
+> — Acib ABBADE
+
+**Última atualização:** 19/04/2026 23:52  
+**Ecossistema:** 3 containers (CT 101-Mails, CT 102-DATASVR, CT 106-Dr_Finance)
