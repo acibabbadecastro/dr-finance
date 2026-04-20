@@ -65,44 +65,26 @@ graph TB
 
 ```mermaid
 sequenceDiagram
-    participant G as 🌐 Gmail/Nubank
-    participant M as 📧 CT 101<br/>Mails
-    participant D as 🤖 CT 106<br/>Dr_Finance
-    participant B as 💾 CT 102<br/>DATASVR
-    participant U as 📱 Usuário
+    participant G as Gmail/Nubank
+    participant M as CT 101 Mails
+    participant D as CT 106 Dr_Finance
+    participant B as CT 102 DATASVR
+    participant U as Usuario
     
-    Note over G,U: 🕐 19:00 - Cron Job Dispara
+    Note over G,U: 19:00 - Cron Job Dispara
     
-    G->>M: 1. Email do Nubank chega
-    Note right of G: Assunto: "Extrato da fatura"
-    
-    M->>M: 2. Valida domínio<br/>@nubank.com.br
-    M->>M: 3. Anti-phishing<br/>3 camadas
-    M->>M: 4. Extrai HTML/PDF
+    G->>M: 1. Email chega
+    M->>M: 2. Valida dominio
+    M->>M: 3. Anti-phishing
+    M->>M: 4. Extrai dados
     M->>M: 5. Estrutura JSON
+    M->>D: 6. Envia dados
+    D->>B: 7. Consulta historico
+    D->>D: 8. Analisa com IA
+    D->>U: 9. Envia relatorio
+    D->>B: 10. Backup
     
-    M->>D: 6. POST /api/analyze
-    Note right of M: 19 transações<br/>R$ 320,00 total
-    
-    D->>B: 7. Consulta histórico
-    Note right of B: Compara com<br/>mês anterior
-    
-    D->>D: 8. Ollama analisa padrões
-    Note right of D: phi3:mini<br/>4096 tokens
-    
-    D->>U: 9. Envia relatório
-    Note right of D: • Resumo do dia<br/>• Por categoria<br/>• Sugestões
-    
-    D->>B: 10. Backup automático
-    Note right of B: /transacoes/<br/>YYYY-MM-DD.csv
-    
-    Note over G,U: ✅ Processo completo em ~30 segundos
-    
-    style G fill:#f3e5f5,stroke:#7b1fa2
-    style M fill:#e8f5e9,stroke:#2e7d32
-    style D fill:#fff3e0,stroke:#ef6c00
-    style B fill:#e3f2fd,stroke:#1565c0
-    style U fill:#fce4ec,stroke:#c2185b
+    Note over G,U: Conclusao em ~30 segundos
 ```
 
 ---
