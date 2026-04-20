@@ -84,13 +84,13 @@ sequenceDiagram
     M->>D: 6. POST /api/analyze
     Note right of M: 19 transações<br/>R$ 320,00 total
     
-    D->>B: 7. GET histórico
+    D->>B: 7. Consulta histórico
     Note right of B: Compara com<br/>mês anterior
     
-    D->>D: 8. Ollama analisa
+    D->>D: 8. Ollama analisa padrões
     Note right of D: phi3:mini<br/>4096 tokens
     
-    D->>U: 9. Relatório Telegram
+    D->>U: 9. Envia relatório
     Note right of D: • Resumo do dia<br/>• Por categoria<br/>• Sugestões
     
     D->>B: 10. Backup automático
